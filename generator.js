@@ -5,6 +5,7 @@ import taParser from './taParser.js'
 const BRACES_REGEX = /\{(.+)\}/gm
 const PARENTH_REGEX = /\((.+)\)/gm
 const TYPES_REGEX = /[_$a-zA-Z]+/
+const PANE_REGEX = /pane[_\s-]*?([0-9]+)/
 
 export default class Generator {
 
@@ -80,12 +81,17 @@ export default class Generator {
     async getTextBased(query) {
 
         let data = { panes: [] }
-        let lines = query.split(';')
+        let lines = query.split(';').map(x => x.trim())
 
         for (var line of lines) {
 
             if (line.includes('indexBased')) {
                 data.indexBased = true
+                continue
+            }
+
+            if (line[0] === '#') {
+                this.parsePaneSettings(line, data)
                 continue
             }
 
@@ -156,6 +162,19 @@ export default class Generator {
         }
 
         return ov
+    }
+
+    parsePaneSettings(line, data) {
+        let m = PANE_REGEX.exec(line)
+        let id = (m && m[1]) ? parseInt(m[1]) : 0
+
+        if (!data.panes[id]) {
+            return console.warn(`Theres not pane #${id}`)
+        }
+
+        let pane = data.panes[id]
+        let obj = this.insideBraces(line)
+        pane.settings = new Function(`return {${obj}}`)()
     }
 
     parseValue(v) {
