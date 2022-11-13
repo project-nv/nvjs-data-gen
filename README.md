@@ -5,7 +5,7 @@
 
 ```npm i @nvjs/data-gen```
 
-## Use 
+## Use
 
 ```js
 // Variants:
@@ -24,5 +24,5 @@ get(`
 ```
 
 `$` means that `Candles` is the main overlay.
-`@` loads data from Binance (f**** tx)
+`@` loads data from Binance
 `rsi(...)` calculates TA with ta.js lib
