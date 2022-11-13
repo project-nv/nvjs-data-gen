@@ -1,0 +1,16 @@
+{
+  "name": "@nvjs/data-gen",
+  "version": "0.1.0",
+  "description": "Data generator for night-vision",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ChartMaster",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.1.3",
+    "ta.js": "^1.13.0"
+  }
+}
