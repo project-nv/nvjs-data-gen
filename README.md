@@ -23,6 +23,6 @@ get(`
 `)
 ```
 
-`$` means that `Candles` is the main overlay.
-`@` loads data from Binance
-`rsi(...)` calculates TA with ta.js lib
+- `$` means that `Candles` is the main overlay.
+- `@` loads data from Binance
+- `rsi(...)` calculates TA with ta.js lib
