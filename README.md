@@ -33,8 +33,7 @@ get('APEUSDT', '1H', 4200)
 get(`
     indexBased;
     $Candles {
-        name=Ape Tether US Binance | data=@(APEUSDT, 1h, 420) |
-        settings={ precision: 2 }
+        name=Ape Tether US Binance | data=@(APEUSDT, 1h, 420)
     }
     + Spline {name=EMA, 10 | data=ema(close, 10)}
     + Spline {name=EMA, 20 | data=ema(close, 20)};
