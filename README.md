@@ -31,14 +31,30 @@ get('APEUSDT', '1H', 4200)
 
 // Text-based data constructor
 get(`
-  indexBased;
-  $Candles {name=Ape Tether US Binance | data=@(APEUSDT, 1h, 4200)}
+    indexBased;
+    $Candles {
+        name=Ape Tether US Binance | data=@(APEUSDT, 1h, 420) |
+        settings={ precision: 2 }
+    }
     + Spline {name=EMA, 10 | data=ema(close, 10)}
     + Spline {name=EMA, 20 | data=ema(close, 20)};
-  RSI(name=RSI, 14 | data=rsi(close, 14));
+    Spline {
+        name=RSI, 14 |
+        data=rsi(close, 14) |
+        settings={ precision: 2 }
+    };
+    #pane0 { scales: { A: { precision: 2 } } };
 `)
 ```
 
+- `indexBased` sets the index-based mode
 - `$` means that `Candles` is the main overlay.
 - `@` loads data from Binance
-- `rsi(...)` calculates TA with ta.js lib
+- `rsi()`, `ema()` calculate TA with [ta.js](https://github.com/Bitvested/ta.js) lib
+- `#` is for the pane settings
+
+Lines should be separated with `;`. Each line is either:
+
+- Overlay1 + Overlay2 + ... + OverlayN
+- indexBased flag
+- pane settings descriptor
