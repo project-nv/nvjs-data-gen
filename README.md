@@ -3,13 +3,29 @@
 
 ## Install
 
-```npm i @nvjs/data-gen```
+`npm i @nvjs/data-gen`
 
 ## Use
 
 ```js
-// Variants:
 
+import Degen from '@nvjs/data-gen'
+
+async function main() {
+
+    let degen = new Degen()
+    let data = await degen.get('APEUSDT', '15m', 420)
+
+    console.log(data)
+}
+
+main()
+
+```
+
+## Examples
+
+```js
 // returns a simple ochlv dataset
 get('APEUSDT', '1H', 4200)
 
