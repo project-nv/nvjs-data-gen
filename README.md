@@ -57,3 +57,9 @@ Lines should be separated with `;`. Each line is either:
 - Overlay1 + Overlay2 + ... + OverlayN
 - indexBased flag
 - pane settings descriptor
+
+Overlay props are separated with `|`:
+
+```js
+Spline { name = EMA, 20 | data = ema(close, 20) }
+```
