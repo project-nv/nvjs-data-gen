@@ -19,10 +19,19 @@ async function __test__() {
 
     var ds = await data.get(`
         indexBased;
-        $Candles {name=Ape Tether US Binance | data=@(APEUSDT, 1h, 420)}
-            + Spline {name=EMA, 10 | data=ema(close, 10)}
-            + Spline {name=EMA, 20 | data=ema(close, 20)};
-        Spline {name=RSI, 14 | data=rsi(close, 14)};
+        $Candles {
+            name=Ape Tether US Binance | data=@(APEUSDT, 1h, 420) |
+            settings={
+                scales: {A: { precision: 2 }}
+            }
+        }
+        + Spline {name=EMA, 10 | data=ema(close, 10)}
+        + Spline {name=EMA, 20 | data=ema(close, 20)};
+        Spline {
+            name=RSI, 14 |
+            data=rsi(close, 14) |
+            settings = { precision: 2 }
+        };
     `)
 
     if (ds?.panes[0]?.overlays[0]?.data.length === 420) {

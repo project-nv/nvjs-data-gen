@@ -2,8 +2,8 @@
 import { DataLoader } from './binance.js'
 import taParser from './taParser.js'
 
-const BRACES_REGEX = /\{(.+)\}/
-const PARENTH_REGEX = /\((.+)\)/
+const BRACES_REGEX = /\{(.+)\}/gm
+const PARENTH_REGEX = /\((.+)\)/gm
 const TYPES_REGEX = /[_$a-zA-Z]+/
 
 export default class Generator {
@@ -136,7 +136,7 @@ export default class Generator {
         let ov = {}
 
         TYPES_REGEX.lastIndex = 0
-        BRACES_REGEX.lastIndex = 0
+        //BRACES_REGEX.lastIndex = 0
 
         var m = TYPES_REGEX.exec(str)
         if (m && m[0]) {
@@ -145,22 +145,57 @@ export default class Generator {
             ov.type = m[0].replace('$', '')
         }
 
-        var m = BRACES_REGEX.exec(str)
-        if (m && m[1]) {
-            let props = m[1].split('|').map(x => x.trim())
+        //var m = BRACES_REGEX.exec(str)
+        var m = this.insideBraces(str)
+        if (m) {
+            let props = m.split('|').map(x => x.trim())
             for (var p of props) {
                 let [k, v] = p.split('=').map(x => x.trim())
-                ov[k] = v
+                ov[k] = this.parseValue(v)
             }
         }
 
-
         return ov
+    }
+
+    parseValue(v) {
+        if (v === 'undefined') return undefined
+        if (v === 'null') return null
+        if (v === 'true') return true
+        if (v === 'false') return false
+        let num = parseFloat(v)
+        if (num === num) return num
+        if (v[0] === '[' || v[0] === '{') {
+            return new Function(`return ${v}`)()
+        }
+        return v
     }
 
     getDataArgs(str) {
         let args = str.split(',').map(x => x.trim())
         args[2] = args[2] ? parseInt(args[2]) : null
         return args
+    }
+
+    insideBraces(src) {
+        let count = 0
+        let firstLeft = undefined
+        let lastRight = undefined
+        for (var i = 0; i < src.length; i++) {
+            if (src[i] === '{') {
+                count++
+                firstLeft = firstLeft ?? i
+            }
+            else if (src[i] === '}') {
+                count--
+                lastRight = i
+            }
+            if (count === 0 && firstLeft !== undefined) {
+                return src.slice(
+                    firstLeft + 1,
+                    lastRight
+                )
+            }
+        }
     }
 }
