@@ -19,7 +19,7 @@ async function exec(query) {
             }
         }
     }
-    
+
     return query
 }
 
@@ -38,7 +38,10 @@ function makeExecutor(script) {
 
     return new Function('env', 'ta', `
 
-        let { open, high, low, close } = env
+        let {
+            open, high, low, close,
+            hl, hcl, hclv, ohcl
+        } = env
 
         return ${script}
     `)
@@ -48,7 +51,8 @@ function makeEnv(data) {
 
     let stub = {
         open: [], high: [], low: [], close: [],
-        volume: [], hlc3: []
+        volume: [], hl: [], hcl: [], ohlc: [],
+        hclv:[]
     }
 
     if (!data.length) return stub
@@ -59,6 +63,10 @@ function makeEnv(data) {
         stub.low = data.map(x => x[3])
         stub.close = data.map(x => x[4])
         stub.volume = data.map(x => x[5])
+        stub.hl = data.map(x => [x[2], x[3]])
+        stub.hcl = data.map(x => [x[2], x[4], x[3]])
+        stub.hclv = data.map(x => [x[2], x[4], x[3], x[5]])
+        stub.ohcl = data.map(x => [x[1], x[2], x[3], x[4]])
     } else {
         stub.close = data.map(x => x[1])
     }
@@ -74,7 +82,11 @@ function timify(result, data) {
 
     for (var i = 0; i < result.length; i++) {
         let t = data[i + offset][0]
-        out.push([t, result[i]])
+        if (typeof result[0] === 'number') {
+            out.push([t, result[i]])
+        } else {
+            out.push([t, ...result[i]])
+        }
     }
     return out
 }

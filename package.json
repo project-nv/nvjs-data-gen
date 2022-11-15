@@ -2,6 +2,7 @@
   "name": "@nvjs/data-gen",
   "version": "0.3.0",
   "description": "Data generator for night-vision",
+  "homepage": "https://github.com/project-nv/nvjs-data-gen",
   "main": "index.js",
   "type": "module",
   "scripts": {
