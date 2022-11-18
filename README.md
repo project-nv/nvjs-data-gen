@@ -27,7 +27,7 @@ main()
 
 ```js
 // returns a simple ochlv dataset
-get('APEUSDT', '1H', 4200)
+get('APEUSDT', '1h', 4200)
 
 // Text-based data constructor
 get(`
