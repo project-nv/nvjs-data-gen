@@ -128,7 +128,7 @@ export default class Generator {
                             this.dl.TF = args[1]
                             let len = args[2] ?? 420
                             let d = await this.dl.loadLength(len)
-                            ov.data = d
+                            ov.data = this.filterData(d, args[3])
                         }
                     }
                 }
@@ -194,6 +194,29 @@ export default class Generator {
         let args = str.split(',').map(x => x.trim())
         args[2] = args[2] ? parseInt(args[2]) : null
         return args
+    }
+
+    filterData(data, filter) {
+        switch(filter) {
+            case 'o':
+            case 'open':
+                return data.map(x => [x[0], x[1]])
+            case 'h':
+            case 'high':
+                return data.map(x => [x[0], x[2]])
+            case 'l':
+            case 'low':
+                return data.map(x => [x[0], x[3]])
+            case 'c':
+            case 'close':
+                return data.map(x => [x[0], x[4]])
+            case 'v':
+            case 'vol':
+            case 'volume':
+                return data.map(x => [x[0], x[5]])
+            default:
+                return data
+        }
     }
 
     insideBraces(src) {
