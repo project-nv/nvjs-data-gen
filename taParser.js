@@ -15,7 +15,11 @@ async function exec(query) {
             if (typeof ov.data === 'string') {
                 let exec = makeExecutor(ov.data)
                 let result = await exec(env, ta)
-                ov.data = timify(result, mainOv.data)
+                if (result.timify === false) {
+                    ov.data = result
+                } else {
+                    ov.data = timify(result, mainOv.data)
+                }
             }
         }
     }
@@ -45,7 +49,7 @@ function makeExecutor(script) {
 
         let {
             open, high, low, close, volume,
-            hl, hcl, hclv, ohcl
+            hl, hcl, hclv, ohcl, time
         } = env
 
         function iter(f) {
@@ -65,12 +69,13 @@ function makeEnv(data) {
     let stub = {
         open: [], high: [], low: [], close: [],
         volume: [], hl: [], hcl: [], ohlc: [],
-        hclv:[]
+        hclv:[], time: []
     }
 
     if (!data.length) return stub
 
     if (data[0].length >= 5) {
+        stub.time = data.map(x => x[0])
         stub.open = data.map(x => x[1])
         stub.high = data.map(x => x[2])
         stub.low = data.map(x => x[3])
@@ -81,6 +86,7 @@ function makeEnv(data) {
         stub.hclv = data.map(x => [x[2], x[4], x[3], x[5]])
         stub.ohcl = data.map(x => [x[1], x[2], x[3], x[4]])
     } else {
+        stub.time = data.map(x => x[0])
         stub.close = data.map(x => x[1])
     }
 
