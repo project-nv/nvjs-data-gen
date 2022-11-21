@@ -1,6 +1,6 @@
 {
   "name": "@nvjs/data-gen",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Data generator for night-vision",
   "homepage": "https://github.com/project-nv/nvjs-data-gen",
   "main": "index.js",

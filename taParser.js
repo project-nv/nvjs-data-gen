@@ -16,7 +16,7 @@ async function exec(query) {
                 let exec = makeExecutor(ov.data)
                 let result = await exec(env, ta)
                 if (result.timify === false) {
-                    ov.data = result
+                    ov.data = result.out || []
                 } else {
                     ov.data = timify(result, mainOv.data)
                 }

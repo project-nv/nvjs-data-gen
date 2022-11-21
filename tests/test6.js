@@ -36,12 +36,11 @@ async function __test__() {
         };
     `)
 
-    if (ds?.panes[0]?.overlays[0]?.data.length > 0) {
+    if (ds?.panes[0]?.overlays[1]?.data.length > 0) {
         console.log('Indicator [OK]')
     } else {
         console.log('Indicator [FAILED]')
     }
-
 }
 
 __test__()
