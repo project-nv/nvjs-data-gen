@@ -33,15 +33,24 @@ function makeExecutor(script) {
     }
 
     for (var f of fns) {
+        if (f === 'iter') continue
         script = script.replace(f, 'ta.' + f)
     }
 
     return new Function('env', 'ta', `
 
         let {
-            open, high, low, close,
+            open, high, low, close, volume,
             hl, hcl, hclv, ohcl
         } = env
+
+        function iter(f) {
+            let out = []
+            for (var i = 0; i < close.length; i++) {
+                out.push(f(i))
+            }
+            return out
+        }
 
         return ${script}
     `)

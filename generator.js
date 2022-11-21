@@ -156,7 +156,8 @@ export default class Generator {
         if (m) {
             let props = m.split('|').map(x => x.trim())
             for (var p of props) {
-                let [k, v] = p.split('=').map(x => x.trim())
+                var [k, ...v] = p.split('=')
+                var [k, v] = [k, v.join('=')].map(x => x.trim())
                 ov[k] = this.parseValue(v)
             }
         }
