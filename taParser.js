@@ -28,12 +28,16 @@ function makeExecutor(script) {
     FN_REGEX.lastIndex = 0
 
     var m, fns = []
+    let taExports = Object.keys(ta)
     while(m = FN_REGEX.exec(script)) {
-        if (m && m[1]) fns.push(m[1])
+        if (m && m[1]) {
+            if (taExports.includes(m[1])) {
+                fns.push(m[1])
+            }
+        }
     }
 
     for (var f of fns) {
-        if (f === 'iter') continue
         script = script.replace(f, 'ta.' + f)
     }
 

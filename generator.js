@@ -52,7 +52,8 @@ export default class Generator {
         }
 
         if (typeof query === 'string' && !tf) {
-            return this.getTextBased(query)
+            let str = this.maskSpecialChars(query)
+            return this.getTextBased(str)
         }
 
         if (typeof query === 'Object') {
@@ -84,6 +85,7 @@ export default class Generator {
         let lines = query.split(';').map(x => x.trim())
 
         for (var line of lines) {
+            line = line.replaceAll('⳾', ';') // unmask ';'
 
             if (line.includes('indexBased')) {
                 data.indexBased = true
@@ -103,6 +105,7 @@ export default class Generator {
             if (!ovs.length) continue
 
             for (var ovSrc of ovs) {
+                ovSrc = ovSrc.replaceAll('⅋', '+') // unmask '+'
                 let ov = this.parseOverlay(ovSrc)
                 newPane.overlays.push(ov)
             }
@@ -156,6 +159,7 @@ export default class Generator {
         if (m) {
             let props = m.split('|').map(x => x.trim())
             for (var p of props) {
+                p = p.replaceAll('︙︙', '||') // unmask '||'
                 var [k, ...v] = p.split('=')
                 var [k, v] = [k, v.join('=')].map(x => x.trim())
                 ov[k] = this.parseValue(v)
@@ -240,5 +244,39 @@ export default class Generator {
                 )
             }
         }
+    }
+
+    maskSpecialChars(src) {
+
+        function setCharAt(s, i, c) {
+            return s.substring(0,i) + c + s.substring(i+1)
+        }
+
+        let count = 0
+        for (var i = 0; i < src.length; i++) {
+            if (src[i] === '{') {
+                count++
+            }
+            else if (src[i] === '}') {
+                count--
+            }
+            if (count > 0) {
+                switch(src[i]) {
+                    /*case '|':
+                        src = setCharAt(src, i, '︙')
+                    break*/
+                    case ';':
+                        src = setCharAt(src, i, '⳾')
+                    break
+                    case '+':
+                        src = setCharAt(src, i, '⅋')
+                    break
+                }
+            }
+        }
+        if (count !== 0) {
+            console.error('Mismatched braces')
+        }
+        return src.replace('||', '︙︙')
     }
 }
