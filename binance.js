@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 class DataLoader {
-    
+
     constructor() {
         this.URL = "https://api1.binance.com/api/v3/klines";
         this.SYM = "APEUSDT";
@@ -13,7 +13,7 @@ class DataLoader {
 
     async load() {
         let url = `${this.URL}?symbol=${this.SYM}&interval=${this.TF}`;
-        let result = await axios.get(url);
+        let result = await this.getUrl(url)
         let data = result.data
         return data.map((x) => this.format(x))
     }
@@ -21,7 +21,7 @@ class DataLoader {
     async loadMore(endTime) {
         let url = `${this.URL}?symbol=${this.SYM}&interval=${this.TF}`;
         url += `&endTime=${endTime}`;
-        let result = await axios.get(url);
+        let result = await this.getUrl(url)
         let data = result.data
         return data.map((x) => this.format(x));
     }
@@ -35,6 +35,21 @@ class DataLoader {
             data.unshift(...chunk)
         }
         return data.slice(-len)
+    }
+
+    async getUrl(url) {
+        try {
+            if (typeof window !== "undefined") {
+                console.log('here')
+                let res = await fetch(url)
+                return { data: await res.json() }
+            } else {
+                return await axios.get(url)
+            }
+        } catch(err) {
+            console.log(err)
+            return { data: [] }
+        }
     }
 
     format(x) {
