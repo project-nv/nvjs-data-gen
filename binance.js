@@ -40,7 +40,6 @@ class DataLoader {
     async getUrl(url) {
         try {
             if (typeof window !== "undefined") {
-                console.log('here')
                 let res = await fetch(url)
                 return { data: await res.json() }
             } else {
