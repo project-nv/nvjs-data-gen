@@ -40,9 +40,8 @@ function makeExecutor(script) {
             }
         }
     }
-
     for (var f of fns) {
-        script = script.replace(f, 'ta.' + f)
+        script = script.replace(f + '(', 'ta.' + f + '(')
     }
 
     return new Function('env', 'ta', `
