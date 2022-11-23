@@ -40,7 +40,6 @@ async function __test__() {
         console.log('Indicator [FAILED]')
     }
 
-    console.log(ds?.panes[1]?.overlays[0]?.data)
 }
 
 __test__()
