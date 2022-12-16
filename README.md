@@ -107,4 +107,17 @@ get(`
     };
 `)
 
+// Add scripts (use `!` prefix):
+
+get(`
+    $Candles {
+        name=Ape Tether US Binance | data=@(APEUSDT, 1h, 420) |
+        settings={ precision: 2 }
+    }
+    + !EMA {
+        props = {
+            length: 12
+        }
+    };
+`)
 ```
