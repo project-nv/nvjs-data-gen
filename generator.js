@@ -4,7 +4,7 @@ import taParser from './taParser.js'
 
 const BRACES_REGEX = /\{(.+)\}/gm
 const PARENTH_REGEX = /\((.+)\)/gm
-const TYPES_REGEX = /[_$a-zA-Z]+/
+const TYPES_REGEX = /[_!$a-zA-Z]+/
 const PANE_REGEX = /pane[_\s-]*?([0-9]+)/
 
 export default class Generator {
@@ -97,17 +97,21 @@ export default class Generator {
                 continue
             }
 
-            let newPane = { overlays: [] }
+            let newPane = { overlays: [], scripts: [] }
 
-            let ovs = line.split('+')
-            ovs = ovs.filter(x => x.trim().length)
+            let items = line.split('+')
+            items = items.filter(x => x.trim().length)
 
-            if (!ovs.length) continue
+            if (!items.length) continue
 
-            for (var ovSrc of ovs) {
-                ovSrc = ovSrc.replaceAll('⅋', '+') // unmask '+'
-                let ov = this.parseOverlay(ovSrc)
-                newPane.overlays.push(ov)
+            for (var src of items) {
+                src = src.replaceAll('⅋', '+') // unmask '+'
+                let item = this.parseEntity(src)
+                if (item.thisIsScript) {
+                    newPane.scripts.push(item.data)
+                } else {
+                    newPane.overlays.push(item.data)
+                }
             }
 
             data.panes.push(newPane)
@@ -140,18 +144,25 @@ export default class Generator {
         return taParser.exec(query)
     }
 
-    parseOverlay(str) {
+    parseEntity(str) {
 
-        let ov = {}
+        let item = {}
+        let thisIsScript = false
 
         TYPES_REGEX.lastIndex = 0
         //BRACES_REGEX.lastIndex = 0
 
         var m = TYPES_REGEX.exec(str)
         if (m && m[0]) {
-            if (m[0][0] === '$') ov.main = true
-            ov.name = m[0].replace('$', '')
-            ov.type = m[0].replace('$', '')
+            if (m[0][0] === '!') {
+                thisIsScript = true
+                m[0] = m[0].replace('!', '')
+            }
+            if (m[0][0] === '$') item.main = true
+            item.type = m[0].replace('$', '')
+            if (!thisIsScript) {
+                item.name = item.type
+            }
         }
 
         //var m = BRACES_REGEX.exec(str)
@@ -162,11 +173,11 @@ export default class Generator {
                 p = p.replaceAll('︙︙', '||') // unmask '||'
                 var [k, ...v] = p.split('=')
                 var [k, v] = [k, v.join('=')].map(x => x.trim())
-                ov[k] = this.parseValue(v)
+                item[k] = this.parseValue(v)
             }
         }
 
-        return ov
+        return {data: item, thisIsScript}
     }
 
     parsePaneSettings(line, data) {

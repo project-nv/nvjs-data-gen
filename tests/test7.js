@@ -34,7 +34,7 @@ async function __test__() {
     `)
 
     if (ds?.panes[1]?.overlays[0]?.data.length > 0 &&
-        ds?.panes[1]?.overlays[0]?.data[0].length === 3) {
+        ds?.panes[1]?.overlays[0]?.data[0].length === 4) {
         console.log('Indicator [OK]')
     } else {
         console.log('Indicator [FAILED]')
