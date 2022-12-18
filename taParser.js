@@ -36,12 +36,11 @@ function makeExecutor(script) {
     while(m = FN_REGEX.exec(script)) {
         if (m && m[1]) {
             if (taExports.includes(m[1])) {
-                fns.push(m[1])
+                script = replace(script, 'ta.' + m[1],
+                    m.index,
+                    m.index + m[1].length)
             }
         }
-    }
-    for (var f of fns) {
-        script = script.replace(f + '(', 'ta.' + f + '(')
     }
 
     return new Function('env', 'ta', `
@@ -61,6 +60,11 @@ function makeExecutor(script) {
 
         return ${script}
     `)
+}
+
+// Insert string into text
+function replace(src, str, i1, i2) {
+    return [src.slice(0, i1), str, src.slice(i2)].join('')
 }
 
 function makeEnv(data) {
